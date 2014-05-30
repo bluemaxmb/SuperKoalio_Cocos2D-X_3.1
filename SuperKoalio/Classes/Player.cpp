@@ -11,9 +11,24 @@
 
 #include "Player.h"
 
-Player::Player(const std::string& filename)
+Sprite* Player::createSprite()
 {
-    m_pPlayerSprite = Sprite::create(filename);
+    // 'sprite' is an autorelease object
+    auto sprite = Player::create();
+    
+    // return the layer
+    return sprite;
+}
+
+// on "init" you need to initialize your instance
+bool Player::init()
+{
+    //////////////////////////////
+    // 1. super init first
+    if ( !Sprite::initWithFile("koalio_stand.png") )
+    {
+        return false;
+    }
     
     m_isJumping = false;
     m_isMoving = false;
@@ -21,11 +36,8 @@ Player::Player(const std::string& filename)
     
     m_vDesiredPosition = Vec2::ZERO;
     m_vVelocity = Vec2::ZERO;
-}
-
-Player::~Player()
-{
     
+    return true;
 }
 
 void Player::update(float delta)
@@ -62,22 +74,12 @@ void Player::update(float delta)
     m_vVelocity = m_vVelocity.getClampPoint(minMovement, maxMovement); //4
     
     Vec2 stepVelocity = m_vVelocity * delta;
-    Vec2 movementVector = m_pPlayerSprite->getPosition() + stepVelocity;
+    Vec2 movementVector = getPosition() + stepVelocity;
     
     setDesiredPosition(movementVector);
 }
 
 //Accessors
-void Player::setPosition(const Vec2& pos)
-{
-    m_pPlayerSprite->setPosition(pos);
-}
-
-Vec2 Player::getPosition()
-{
-    return m_pPlayerSprite->getPosition();
-}
-
 void Player::setDesiredPosition(const Vec2& pos)
 {
     m_vDesiredPosition = pos;
@@ -128,22 +130,17 @@ bool Player::getIsJumpingFlag()
     return m_isJumping;
 }
 
-Sprite* Player::getPlayerSprite()
-{
-    return m_pPlayerSprite;
-}
-
 Rect Player::getCollisionBoundBox()
 {
-    Rect boundingBox = m_pPlayerSprite->getBoundingBox();
+    Rect boundingBox = getBoundingBox();
     
     //Inset
-    Rect collisionBox = Rect(m_pPlayerSprite->getBoundingBox().origin.x + 3,
-                             m_pPlayerSprite->getBoundingBox().origin.y,
-                             m_pPlayerSprite->getBoundingBox().size.width - 6,
-                             m_pPlayerSprite->getBoundingBox().size.height);
+    Rect collisionBox = Rect(getBoundingBox().origin.x + 3,
+                             getBoundingBox().origin.y,
+                             getBoundingBox().size.width - 6,
+                             getBoundingBox().size.height);
 
-    Vec2 diff = m_vDesiredPosition - m_pPlayerSprite->getPosition();
+    Vec2 diff = m_vDesiredPosition - getPosition();
     
     //Offset
     Rect returnBoundingBox = Rect(collisionBox.origin.x + diff.x,

@@ -17,17 +17,22 @@
 
 USING_NS_CC;
 
-class Player
+class Player : public cocos2d::Sprite
 {
 public:
-    Player(const std::string& filename);
-    ~Player();
+    // there's no 'id' in cpp, so we recommend returning the class instance pointer
+    static cocos2d::Sprite* createSprite();
     
-    void update(float delta);
+    // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
+    bool init();
+    
+    // implement the "static create()" method manually
+    CREATE_FUNC(Player);
+    
+    //scheduled methods
+    virtual void update(float dt);
     
     //Accessors
-    void setPosition(const Vec2& pos);
-    Vec2 getPosition();
     void setDesiredPosition(const Vec2& pos);
     Vec2 getDesiredPosition();
     void setVelocity(const Vec2& velocity);
@@ -40,14 +45,11 @@ public:
     void setIsJumpingFlag(const bool isJumping);
     bool getIsJumpingFlag();
     
-    Sprite* getPlayerSprite();
-    
     Rect getCollisionBoundBox();
     
 private:
     Vec2 m_vVelocity;
     Vec2 m_vDesiredPosition;
-    Sprite* m_pPlayerSprite;
     bool m_isOnGround;
     bool m_isMoving;
     bool m_isJumping;

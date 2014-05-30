@@ -42,9 +42,9 @@ bool GameLevelLayer::init()
     m_pMap = TMXTiledMap::create("level1.tmx");
     this->addChild(m_pMap, 0);
     
-    m_pPlayer = new Player("koalio_stand.png");
+    m_pPlayer = (Player*)Player::createSprite();
     m_pPlayer->setPosition(Vec2(100, 50));
-    m_pMap->addChild(m_pPlayer->getPlayerSprite(), 15);
+    m_pMap->addChild(m_pPlayer, 15);
     
     m_pWallLayer = m_pMap->getLayer("walls");
     m_pHazardLayer = m_pMap->getLayer("hazards");
